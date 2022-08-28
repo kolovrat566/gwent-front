@@ -8,8 +8,13 @@
   }
 
   .mainField {
+    display: flex;
     width: 1000px;
     height: 100px;
     border: 1px solid black;
+  }
+
+  .isCanDrop {
+    background-color: #33e84eb8;
   }
 }

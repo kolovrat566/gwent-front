@@ -1,79 +1,44 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import Hand from '../../components/Hand';
 import PlayingField from '../../components/PlayingField';
-
-const feilds = [
-  {
-    type: 'enemy',
-    value: 'siege'
-  },
-  {
-    type: 'enemy',
-    value: 'range'
-  },
-  {
-    type: 'enemy',
-    value: 'melee'
-  },
-  {
-    type: 'ally',
-    value: 'melee'
-  },
-  {
-    type: 'ally',
-    value: 'range'
-  },
-  {
-    type: 'ally',
-    value: 'siege'
-  },
-];
+import { fields, createField } from '../../helper';
 
 function GameTable() {
-  const [cards, setCards] = useState<any>([])
-  // console.log(cards);
-
-  const addCard = (item: any, q :any, property: any) => {
-    console.log(item, q, property);
-    
-    setCards((state: any) => [...state, 1])
+  const [game, setGame] = useState(createField());
+  const addCard = (item: any,  property: any) => {
+    setGame((game: any) => ({
+      fields: [...game.fields.map((element: any, index: number) => (
+        property.type === element.type && property.value === element.value ?
+          { ...element, cards: [...game.fields[index].cards, item.cardParams]} :
+          element
+        )
+      )
+    ],
+      hand: game.hand.filter((element: any) => {
+        return element.id !== item.cardParams.id
+      }),
+    }))    
   }
 
-  const handleDrop = useCallback(
-    (index: number, item: { name: string }) => {
-      const { name } = item
-      console.log(item);
-      
-      // setDroppedBoxNames(
-      //   update(droppedBoxNames, name ? { $push: [name] } : { $push: [] }),
-      // )
-      // setDustbins(
-      //   update(dustbins, {
-      //     [index]: {
-      //       lastDroppedItem: {
-      //         $set: item,
-      //       },
-      //     },
-      //   }),
-      // )
-    },
-    [],
-  )
+  // console.log(game);
+  
   
   return (
     <div>
       <DndProvider backend={HTML5Backend}>
-        {feilds.map((item, idx) => (
+        {fields.map((item, idx) => (
           <PlayingField
             property={item}
             addCard={addCard}
-            onDrop={(item: any) => handleDrop(idx, item)}
+            hand={game.hand}
+            game={game}
+            fieldIdx={idx}
           />
         ))}
-        <Hand cards={[1,2,3,4,5]} />
+        <Hand cards={game.hand} game={game}/>
       </DndProvider>
     </div>
   )

@@ -4,14 +4,17 @@ import Card from '../Card';
 import styles from './Hand.module.scss';
 
 interface IProps {
-  cards: any[]
+  cards: any[],
+  game: any
 }
 
-function Hand({ cards }: IProps) {
+function Hand({ cards, game }: IProps) {
+ console.log(1);
+     
   return (
     <div className={styles.hand}>
       {cards.map(item => (
-        <Card item={item}></Card>
+        <Card cardParams={item} game={game}/>
       ))}
     </div>
   )
